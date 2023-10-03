@@ -1,7 +1,7 @@
 ---
 title: "Business Intelligence Lab Submission Markdown"
-author: "<Specify your group name here>"
-date: "<Specify the date when you submitted the lab>"
+author: "<Team Kubwa>"
+date: "<03/11/2023>"
 output:
   github_document: 
     toc: yes
@@ -18,17 +18,17 @@ editor_options:
 +---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | **Student ID Numbers and Names of Group Members** | *\<list one student name, class group (just the letter; A, B, or C), and ID per line, e.g., 123456 - A - John Leposo; you should be between 2 and 5 members per group\>* |
 |                                                   |                                                                                                                                                                          |
-|                                                   | 1.  ID - Class Group - Name                                                                                                                                              |
+|                                                   | 1.  128998 - B -  Crispus Nzano                                                                                                                                              |
 |                                                   |                                                                                                                                                                          |
-|                                                   | 2.  ID - Class Group - Name                                                                                                                                              |
+|                                                   | 2.  112826 - B - Matu Ngatia                                                                                                                                              |
 |                                                   |                                                                                                                                                                          |
-|                                                   | 3.  ID - Class Group - Name                                                                                                                                              |
+|                                                   | 3.  134092 - B - Alison Kuria                                                                                                                                              |
 |                                                   |                                                                                                                                                                          |
-|                                                   | 4.  ID - Class Group - Name                                                                                                                                              |
+|                                                   | 4.  134100 - B - Timmothy Obosi                                                                                                                                              |
 |                                                   |                                                                                                                                                                          |
-|                                                   | 5.  ID - Class Group - Name                                                                                                                                              |
+|                                                   | 5.  135269 - B - Clifford Bett                                                                                                                                             |
 +---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| **GitHub Classroom Group Name**                   | *\<specify the name of the team you created on GitHub classroom\>*                                                                                                       |
+| **GitHub Classroom Group Name**                   | *\<Team Kubwa\>*                                                                                                       |
 +---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | **Course Code**                                   | BBT4206                                                                                                                                                                  |
 +---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -100,7 +100,7 @@ The 20230412-20230719-BI1-BBIT4-1-StudentPerformanceDataset is then loaded. The 
 ```{r Load Dataset}
 student_performance_dataset <-
   readr::read_csv(
-                  "../data/20230412-20230719-BI1-BBIT4-1-StudentPerformanceDataset.CSV", # nolint
+                  "C:/Users/Cris/github-classroom/BBT4206-R-Lab2b-of15-EDAForQualitativeData-team-kubwa/data/20230412-20230719-BI1-BBIT4-1-StudentPerformanceDataset - dataset.csv", 
                   col_types =
                   readr::cols(
                               class_group =
@@ -242,34 +242,252 @@ We then display the number of observations and number of variables. We have 101 
 dim(student_performance_dataset)
 ```
 
-Next, we display the quartiles for each numeric variable[*... think of this process as **"storytelling using the data."** Tell us what is happening; tell us what you are discovering as you proceed with the markdown; walk us through your code step-by-step (a code walkthrough).*]{#highlight style="color: blue"}
+Next, we display the quartiles for each numeric variable{#highlight style="color: blue"}
 
 ```{r Your Fifth Code Chunk}
 summary(student_performance_dataset)
 ```
 
-# \<You can Provide Another Appropriate Title Here if you wish\>
+# \<Comparison of Most Frequently used words across the three Groups namely A, B and C\>
 
-Describe the code chunk here.
+For Group A; reduce, quizzes and labs were the most frequantly used words. From these words we can see that group A's main concern was to reduce quizzes and labs.
+For Group B; class was the most frequently used word and their concern could be about the class activites and the concepts.
+For Group C; slides were the most frequent used word meaning that what the slides were explaining was important to them.
 
 ```{r Your Sixth Code Chunk}
-# Fill this with R related code that will be executed when the R markdown file
+### Top 10 words per group ----
+# Load and attach the dplyr package
+library(dplyr)
+library(tidytext)
+# Load and attach the ggplot2 package
+library(ggplot2)
+
+ 
+expand_contractions <- function(doc) {
+  doc <- gsub("I'm", "I am", doc, ignore.case = TRUE)
+  doc <- gsub("you're", "you are", doc, ignore.case = TRUE)
+  doc <- gsub("he's", "he is", doc, ignore.case = TRUE)
+  doc <- gsub("she's", "she is", doc, ignore.case = TRUE)
+  doc <- gsub("it's", "it is", doc, ignore.case = TRUE)
+  doc <- gsub("we're", "we are", doc, ignore.case = TRUE)
+  doc <- gsub("they're", "they are", doc, ignore.case = TRUE)
+  doc <- gsub("I'll", "I will", doc, ignore.case = TRUE)
+  doc <- gsub("you'll", "you will", doc, ignore.case = TRUE)
+  doc <- gsub("he'll", "he will", doc, ignore.case = TRUE)
+  doc <- gsub("she'll", "she will", doc, ignore.case = TRUE)
+  doc <- gsub("it'll", "it will", doc, ignore.case = TRUE)
+  doc <- gsub("we'll", "we will", doc, ignore.case = TRUE)
+  doc <- gsub("they'll", "they will", doc, ignore.case = TRUE)
+  doc <- gsub("won't", "will not", doc, ignore.case = TRUE)
+  doc <- gsub("can't", "cannot", doc, ignore.case = TRUE)
+  doc <- gsub("n't", " not", doc, ignore.case = TRUE)
+  return(doc)
+}
+
+evaluation_likes_and_wishes <- student_performance_dataset %>%
+  mutate(`Student's Gender` =
+           ifelse(gender == 1, "Male", "Female")) %>%
+  rename(`Class Group` = class_group) %>%
+  rename(Likes = `D - 1. \nWrite two things you like about the teaching and learning in this unit so far.`) %>% 
+  rename(Wishes = `D - 2. Write at least one recommendation to improve the teaching and learning in this unit (for the remaining weeks in the semester)`) %>% 
+  select(`Class Group`,
+         `Student's Gender`, `Average Course Evaluation Rating`,
+         Likes, Wishes) %>%
+  filter(!is.na(`Average Course Evaluation Rating`)) %>%
+  arrange(`Class Group`)
+
+# Before expanding contractions (See row number 4)
+View(evaluation_likes_and_wishes)
+
+# Correct way to assign values to variables
+
+evaluation_likes_and_wishes$Likes <- sapply(evaluation_likes_and_wishes$Likes, expand_contractions) 
+evaluation_likes_and_wishes$Wishes <- sapply(evaluation_likes_and_wishes$Wishes, expand_contractions) 
+
+# After expanding contractions
+View(evaluation_likes_and_wishes)
+
+evaluation_likes_and_wishes$Likes <- sapply(evaluation_likes_and_wishes$Likes, expand_contractions) 
+evaluation_likes_and_wishes$Wishes <- sapply(evaluation_likes_and_wishes$Wishes, expand_contractions) 
+
+# After expanding contractions
+View(evaluation_likes_and_wishes)
+
+## Special Characters and Lower Case ----
+# NOTE: The special characters should be removed *after* expanding the
+# contractions
+
+# A function to remove special characters
+# Remember the use of regular expressions in the
+# BBT3104: Advanced Database Systems course
+
+# A tutorial on regular expressions: https://regexone.com/
+# To test your regular expression: https://regexr.com/
+
+remove_special_characters <- function(doc) {
+  gsub("[^a-zA-Z0-9 ]", "", doc, ignore.case = TRUE)
+}
+
+# Before removing special characters (See row number 11)
+View(evaluation_likes_and_wishes)
+
+evaluation_likes_and_wishes$Likes <- sapply(evaluation_likes_and_wishes$Likes, remove_special_characters) 
+
+evaluation_likes_and_wishes$Wishes <- sapply(evaluation_likes_and_wishes$Wishes, remove_special_characters) 
+
+# Convert everything to lower case (to standardize the text)
+evaluation_likes_and_wishes$Likes <- sapply(evaluation_likes_and_wishes$Likes, tolower) 
+evaluation_likes_and_wishes$Wishes <- sapply(evaluation_likes_and_wishes$Wishes, tolower) 
+
+# After removing special characters and converting everything to lower case
+View(evaluation_likes_and_wishes)
+
+undesirable_words <- c("wow", "lol", "none", "na")
+
+evaluation_likes_filtered <- evaluation_likes_and_wishes %>% 
+  # We start by tokenization (un-nesting words). This is from the variable
+  # "Like" into the variable "word".
+  unnest_tokens(word, Likes) %>%
+  # Then we remove stopwords using an anti-join (remember this from the
+  # BBT3104: Advanced Database Systems course)
+  # Anti-join: do not join where the word is in the list of stopwords
+  anti_join(stop_words, by = c("word")) %>%
+  distinct() %>%
+
+  filter(!word %in% undesirable_words) %>%
+  # Include only words that are more than 3 characters long (assuming that
+  # these are the words that are meaningful)
+  filter(nchar(word) > 3) %>%
+  # We then rename the variable "word" for ease of use.
+  rename(`Likes (tokenized)` = word) %>%
+  # We focus only on the likes in this data frame
+  select(-Wishes)
+
+evaluation_wishes_filtered <- evaluation_likes_and_wishes %>% 
+  unnest_tokens(word, Wishes) %>%
+  anti_join(stop_words, by = c("word")) %>%
+  distinct() %>%
+  filter(!word %in% undesirable_words) %>%
+  filter(nchar(word) > 3) %>%
+  rename(`Wishes (tokenized)` = word) %>%
+  select(-Likes)
+
+popular_words <- evaluation_wishes_filtered %>%
+  group_by(`Class Group`) %>%
+  count(`Wishes (tokenized)`, `Class Group`, sort = TRUE) %>%
+  slice(seq_len(10)) %>%
+  ungroup() %>%
+  arrange(`Class Group`, n) %>%
+  mutate(row = row_number())
+
+blue_grey_colours_11 <- c("#27408E", "#304FAF", "#536CB5", "#6981c7", "#8da0db",
+                          "#dde5ec", "#c8c9ca", "#B9BCC2", "#A7AAAF", "#888A8E",
+                          "#636569")
+
+blue_grey_colours_6 <- c("#27408E", "#304FAF", "#536CB5",
+                         "#B9BCC2", "#A7AAAF", "#888A8E")
+
+blue_grey_colours_4 <- c("#27408E", "#536CB5",
+                         "#B9BCC2", "#888A8E")
+
+blue_grey_colours_3 <- c("#6981c7", "#304FAF", "#888A8E")
+
+blue_grey_colours_2 <- c("#27408E",
+                         "#888A8E")
+
+blue_grey_colours_1 <- c("#6981c7")
+blue_grey_theme <- function() {
+  theme(
+    axis.ticks = element_line(
+                              linewidth = 1, linetype = "dashed",
+                              lineend = NULL, color = "#dfdede",
+                              arrow = NULL, inherit.blank = FALSE),
+    axis.text = element_text(
+                             face = "bold", color = "#3f3f41",
+                             size = 12, hjust = 0.5),
+    axis.title = element_text(face = "bold", color = "#3f3f41",
+                              size = 14, hjust = 0.5),
+    plot.title = element_text(face = "bold", color = "#3f3f41",
+                              size = 16, hjust = 0.5),
+    panel.grid = element_line(
+                              linewidth = 0.1, linetype = "dashed",
+                              lineend = NULL, color = "#dfdede",
+                              arrow = NULL, inherit.blank = FALSE),
+    panel.background = element_rect(fill = "#f3eeee"),
+    legend.title = element_text(face = "plain", color = "#3f3f41",
+                                size = 12, hjust = 0),
+    legend.position = "right"
+  )
+}
+
+popular_words %>%
+  ggplot(aes(row, n, fill = `Class Group`)) +
+  geom_col(fill = blue_grey_colours_1) +
+  blue_grey_theme() +
+  labs(x = "Word in Course Evaluation",
+       y = "Number of Times Used (Term Frequency)") +
+  ggtitle("Most Frequently Used Words in Course Evaluation Wishes per 
+          Class Group") +
+  facet_wrap(~`Class Group`, scales = "free") +
+  scale_x_continuous(
+                     breaks = popular_words$row,
+                     labels = popular_words$`Wishes (tokenized)`) +
+  coord_flip()
 ```
 
-## \<You Can Have a Sub-Title Here if you wish\>
+## \<Most Important words based on gender in all groups\>
 
-Describe the code chunk here.
+For females the most important words indicate that their concern is regarding delivery of online class material; for examples with the word watch, they would be expressing the need for more videos.
+For males the most important words indicate that their concern is regarding the class itself for example; the recommendations given in class seem to be of importance to them.
 
 ```{r Your Seventh Code Chunk}
-# Fill this with other R related code that will be executed when the R markdown
+popular_tfidf_words_gender_wishes <- evaluation_wishes_filtered %>% # nolint
+  unnest_tokens(word, `Wishes (tokenized)`) %>%
+  distinct() %>%
+  filter(!word %in% undesirable_words) %>%
+  filter(nchar(word) > 3) %>%
+  rename(`Wishes (tokenized)` = word) %>%
+  select(`Class Group`, `Student's Gender`,
+         `Average Course Evaluation Rating`, `Wishes (tokenized)`) %>%
+  count(`Student's Gender`, `Wishes (tokenized)`, sort = TRUE) %>%
+  ungroup() %>%
+  bind_tf_idf(`Wishes (tokenized)`, `Student's Gender`, n)
+
+head(popular_tfidf_words_gender_wishes)
+
+top_popular_tfidf_words <- popular_tfidf_words_gender_wishes %>%
+  arrange(desc(tf_idf)) %>%
+  mutate(`Wishes (tokenized)` =
+           factor(`Wishes (tokenized)`,
+                  levels = rev(unique(`Wishes (tokenized)`)))) %>%
+  group_by(`Student's Gender`) %>%
+  slice(seq_len(10)) %>%
+  ungroup() %>%
+  arrange(`Student's Gender`, tf_idf) %>%
+  mutate(row = row_number())
+
+top_popular_tfidf_words %>%
+  ggplot(aes(x = row, tf_idf, fill = `Student's Gender`)) +
+  geom_col(fill = blue_grey_colours_1) +
+  blue_grey_theme() +
+  labs(x = "Word in Course Evaluation", y = "TF-IDF Score") +
+  ggtitle("Important Words using TF-IDF by Chart Level") +
+  ggtitle("Most Important Words by TF-IDF Score in Course Evaluation Wishes per 
+      Class Group") +
+  facet_wrap(~`Student's Gender`, scales = "free") +
+  scale_x_continuous(
+                     breaks = top_popular_tfidf_words$row,
+                     labels = top_popular_tfidf_words$`Wishes (tokenized)`) +
+  coord_flip()
 ```
 
-## \<You Can Have Another Sub-Title Here if you wish\>
+## \<Performing Lemmatization\>
 
-Describe the code chunk here.
+In this section we will perform lemmatization on the evaluation_likes_filtered file and the evaluation_wishes_filtered file.
 
 ```{r Your Eighth Code Chunk}
-# Fill this with other R related code that will be executed when the R markdown
-```
+function(text) {
+    result <- treetag(text)
+    return(result$lemma)
+}
 
-**etc.** as per the lab submission requirements. Be neat and communicate in a clear and logical manner.
